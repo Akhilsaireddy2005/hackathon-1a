@@ -34,9 +34,6 @@ RUN mkdir -p /app/staticfiles /app/media
 # Set environment variables for Django
 ENV DJANGO_SETTINGS_MODULE=smart_campus.settings
 
-# Collect static files (skip database operations during build)
-RUN python manage.py collectstatic --noinput --clear
-
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' appuser \
     && chown -R appuser:appuser /app
