@@ -71,6 +71,31 @@
                             <span>Reviewed by: {{ request.reviewed_by.username }}</span>
                         </div>
                         {% endif %}
+                        {# If this is an event creation request, show event preview fields #}
+                        {% if request.permission_type == 'event_creation' %}
+                        <hr />
+                        <div class="mb-2">
+                            <h6 class="mb-1">Event Preview</h6>
+                            {% if request.event_title %}
+                                <strong>{{ request.event_title }}</strong>
+                                <div class="text-muted small">{{ request.event_location }}</div>
+                            {% endif %}
+                            {% if request.event_start_date %}
+                                <div class="small mt-1">Starts: {{ request.event_start_date|date:"F d, Y H:i" }}</div>
+                            {% endif %}
+                            {% if request.event_end_date %}
+                                <div class="small">Ends: {{ request.event_end_date|date:"F d, Y H:i" }}</div>
+                            {% endif %}
+                            {% if request.event_description %}
+                                <p class="mt-2 mb-0">{{ request.event_description|truncatewords:30 }}</p>
+                            {% endif %}
+                            {% if request.event_image %}
+                                <div class="mt-2">
+                                    <img src="{{ request.event_image.url }}" alt="event image" class="img-fluid rounded" style="max-height:200px; object-fit:cover;" />
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
                     </div>
                     
                     <div class="mt-auto">
@@ -80,20 +105,29 @@
                                 <i class="fas fa-eye me-2"></i>View Details
                             </a>
                         </div>
-                        {% else %}
+                        {% elif user.is_faculty %}
                         {% if request.status == 'pending' %}
                         <div class="d-flex gap-2">
-                            <a href="{% url 'users:approve_permission' request.id %}" class="btn btn-success btn-sm flex-fill">
-                                <i class="fas fa-check me-2"></i>Approve
-                            </a>
-                            <a href="{% url 'users:reject_permission' request.id %}" class="btn btn-danger btn-sm flex-fill">
-                                <i class="fas fa-times me-2"></i>Reject
-                            </a>
+                            {% if request.permission_type == 'event_creation' %}
+                                <a href="{% url 'users:approve_permission' request.id %}" class="btn btn-success btn-sm flex-fill">
+                                    <i class="fas fa-check me-2"></i>Accept Event
+                                </a>
+                                <a href="{% url 'users:reject_permission' request.id %}" class="btn btn-danger btn-sm flex-fill">
+                                    <i class="fas fa-times me-2"></i>Decline Event
+                                </a>
+                            {% else %}
+                                <a href="{% url 'users:approve_permission' request.id %}" class="btn btn-success btn-sm flex-fill">
+                                    <i class="fas fa-check me-2"></i>Approve
+                                </a>
+                                <a href="{% url 'users:reject_permission' request.id %}" class="btn btn-danger btn-sm flex-fill">
+                                    <i class="fas fa-times me-2"></i>Reject
+                                </a>
+                            {% endif %}
                         </div>
                         {% else %}
-                        <div class="alert alert-info mb-0">
+                        <div class="alert alert-secondary mb-0">
                             <i class="fas fa-info-circle me-2"></i>
-                            This request has been {{ request.get_status_display|lower }}.
+                            You do not have permission to review this request.
                         </div>
                         {% endif %}
                         {% endif %}

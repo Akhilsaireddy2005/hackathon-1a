@@ -15,16 +15,34 @@
                     {% if notifications %}
                         <div class="list-group">
                             {% for notification in notifications %}
-                                <a href="{% url 'users:mark_notification_read' notification.id %}" class="list-group-item list-group-item-action {% if not notification.is_read %}list-group-item-primary{% endif %}">
+                                <div class="list-group-item {% if not notification.is_read %}list-group-item-primary{% endif %}">
                                     <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1">{{ notification.title }}</h5>
-                                        <small>{{ notification.created_at|timesince }} ago</small>
+                                        <div>
+                                            <h5 class="mb-1">{{ notification.title }}</h5>
+                                            <p class="mb-1">{{ notification.message }}</p>
+                                        </div>
+                                        <div class="text-end">
+                                            <small class="d-block">{{ notification.created_at|timesince }} ago</small>
+                                            {% if not notification.is_read %}
+                                                <span class="badge bg-primary">New</span>
+                                            {% endif %}
+                                        </div>
                                     </div>
-                                    <p class="mb-1">{{ notification.message }}</p>
-                                    {% if not notification.is_read %}
-                                        <span class="badge bg-primary">New</span>
-                                    {% endif %}
-                                </a>
+                                    <div class="mt-2 d-flex gap-2">
+                                        {% if notification.link %}
+                                            <a href="{% url 'users:mark_notification_read' notification.id %}" class="btn btn-outline-secondary btn-sm">View</a>
+                                            {# If this notification points to a permission request, show quick Accept/Decline for faculty/admin #}
+                                            {% if 'permission-requests' in notification.link %}
+                                                {% if user.is_faculty %}
+                                                    <a href="{{ notification.link|add:'approve/' }}" class="btn btn-success btn-sm">Accept</a>
+                                                    <a href="{{ notification.link|add:'reject/' }}" class="btn btn-danger btn-sm">Decline</a>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">No action</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             {% endfor %}
                         </div>
                     {% else %}

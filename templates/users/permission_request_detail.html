@@ -1,0 +1,77 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Permission Request - KLH University Smart Campus{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Permission Request</h4>
+                </div>
+                <div class="card-body">
+                    <h5>{{ request_obj.get_permission_type_display }}</h5>
+                    <p class="text-muted">Requested by: <strong>{{ request_obj.user.username }}</strong></p>
+                    <p>{{ request_obj.reason|linebreaks }}</p>
+
+                    {% if request_obj.permission_type == 'event_creation' %}
+                    <hr />
+                    <div class="mb-3">
+                        <h6 class="mb-1">Event Details</h6>
+                        {% if request_obj.event_title %}
+                            <h5 class="mb-1">{{ request_obj.event_title }}</h5>
+                        {% endif %}
+                        {% if request_obj.event_location %}
+                            <div class="text-muted small">Location: {{ request_obj.event_location }}</div>
+                        {% endif %}
+                        {% if request_obj.event_start_date %}
+                            <div class="small mt-1">Starts: {{ request_obj.event_start_date|date:"F d, Y H:i" }}</div>
+                        {% endif %}
+                        {% if request_obj.event_end_date %}
+                            <div class="small">Ends: {{ request_obj.event_end_date|date:"F d, Y H:i" }}</div>
+                        {% endif %}
+                        {% if request_obj.event_description %}
+                            <p class="mt-2">{{ request_obj.event_description|linebreaks }}</p>
+                        {% endif %}
+                        {% if request_obj.event_image %}
+                            <div class="mt-3">
+                                <img src="{{ request_obj.event_image.url }}" alt="event image" class="img-fluid rounded" style="max-height:350px; object-fit:cover;" />
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-4">
+                        {% if user.is_student and request_obj.user == user %}
+                            <a href="#" class="btn btn-outline-primary">Back to my requests</a>
+                        {% elif user.is_faculty %}
+                            {% if request_obj.status == 'pending' %}
+                                {% if request_obj.permission_type == 'event_creation' %}
+                                <a href="{% url 'users:approve_permission' request_obj.id %}" class="btn btn-success me-2">
+                                    <i class="fas fa-check me-1"></i>Accept Event
+                                </a>
+                                <a href="{% url 'users:reject_permission' request_obj.id %}" class="btn btn-danger">
+                                    <i class="fas fa-times me-1"></i>Decline Event
+                                </a>
+                                {% else %}
+                                <a href="{% url 'users:approve_permission' request_obj.id %}" class="btn btn-success me-2">
+                                    <i class="fas fa-check me-1"></i>Approve
+                                </a>
+                                <a href="{% url 'users:reject_permission' request_obj.id %}" class="btn btn-danger">
+                                    <i class="fas fa-times me-1"></i>Reject
+                                </a>
+                                {% endif %}
+                            {% else %}
+                                <div class="alert alert-info">This request was {{ request_obj.get_status_display|lower }} by {{ request_obj.reviewed_by.username }} on {{ request_obj.reviewed_at|date:"F d, Y" }}.</div>
+                            {% endif %}
+                        {% else %}
+                            <div class="alert alert-secondary">You do not have permission to review this request.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

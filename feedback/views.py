@@ -11,6 +11,7 @@ class FeedbackForm(forms.ModelForm):
         model = Feedback
         fields = ['title', 'description', 'category']
 
+@login_required
 def feedback_list(request):
     feedback = Feedback.objects.all().order_by('-created_at')
     return render(request, 'feedback/list.html', {'feedback_list': feedback})
@@ -40,6 +41,7 @@ def create_feedback(request):
         form = FeedbackForm()
     return render(request, 'feedback/form.html', {'form': form, 'title': 'Submit Feedback'})
 
+@login_required
 def feedback_detail(request, feedback_id):
     feedback = get_object_or_404(Feedback, id=feedback_id)
     return render(request, 'feedback/detail.html', {'feedback': feedback})

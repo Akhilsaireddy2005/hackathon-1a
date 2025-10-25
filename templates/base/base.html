@@ -21,18 +21,20 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'home' %}">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'lost_found:list' %}">Lost & Found</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'events:list' %}">Events</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'feedback:list' %}">Feedback</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'clubs:list' %}">Clubs</a>
-                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'lost_found:list' %}">Lost & Found</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'events:list' %}">Events</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'feedback:list' %}">Feedback</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'clubs:list' %}">Clubs</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
@@ -46,6 +48,12 @@
                                 {% endif %}
                             </a>
                         </li>
+                        {# Quick 'Request Permission' for students who cannot create events directly #}
+                        {% if user.is_authenticated and user.is_student %}
+                        <li class="nav-item me-2">
+                            <a class="nav-link btn btn-outline-light btn-sm text-white" href="{% url 'users:request_permission' %}">Request Permission</a>
+                        </li>
+                        {% endif %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                                 {{ user.username }}

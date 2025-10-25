@@ -10,6 +10,7 @@ class ClubForm(forms.ModelForm):
         model = Club
         fields = ['name', 'description', 'logo']
 
+@login_required
 def club_list(request):
     clubs = Club.objects.all().order_by('name')
     return render(request, 'clubs/list.html', {'clubs': clubs})
@@ -35,6 +36,7 @@ def create_club(request):
         form = ClubForm()
     return render(request, 'clubs/form.html', {'form': form, 'title': 'Create Club'})
 
+@login_required
 def club_detail(request, club_id):
     club = get_object_or_404(Club, id=club_id)
     return render(request, 'clubs/detail.html', {'club': club})

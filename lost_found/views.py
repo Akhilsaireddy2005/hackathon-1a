@@ -12,6 +12,7 @@ class LostItemForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
 
+@login_required
 def item_list(request):
     items = LostItem.objects.all().order_by('-created_at')
     return render(request, 'lost_found/list.html', {'items': items})
@@ -30,6 +31,7 @@ def create_item(request):
         form = LostItemForm()
     return render(request, 'lost_found/form.html', {'form': form, 'title': 'Report Item'})
 
+@login_required
 def item_detail(request, item_id):
     item = get_object_or_404(LostItem, id=item_id)
     return render(request, 'lost_found/detail.html', {'item': item})

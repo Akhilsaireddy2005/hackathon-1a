@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:event_id>/edit/', views.edit_event, name='edit'),
     path('<int:event_id>/attend/', views.attend_event, name='attend'),
     path('<int:event_id>/delete/', views.delete_event, name='delete'),
+    path('api/<int:event_id>/delete/', views.ajax_delete_event, name='ajax_delete'),
 ]

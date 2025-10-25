@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 from .models import Event
 from django import forms
 from users.decorators import faculty_or_admin_required
@@ -14,6 +16,7 @@ class EventForm(forms.ModelForm):
             'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
+@login_required
 def event_list(request):
     events = Event.objects.all().order_by('-start_date')
     return render(request, 'events/list.html', {'events': events})
@@ -38,6 +41,7 @@ def create_event(request):
         form = EventForm()
     return render(request, 'events/form.html', {'form': form, 'title': 'Create Event'})
 
+@login_required
 def event_detail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     return render(request, 'events/detail.html', {'event': event})
@@ -91,3 +95,22 @@ def delete_event(request, event_id):
         return redirect('events:list')
     
     return render(request, 'events/confirm_delete.html', {'event': event})
+
+@login_required
+@require_http_methods(["DELETE"])
+def ajax_delete_event(request, event_id):
+    """AJAX endpoint for deleting an event - only organizer or admin can delete"""
+    event = get_object_or_404(Event, id=event_id)
+    
+    # Check if user can delete (organizer or admin)
+    if not (request.user == event.organizer or request.user.is_admin_user()):
+        return JsonResponse({'error': 'Permission denied'}, status=403)
+    
+    try:
+        event_title = event.title
+        event.delete()
+        return JsonResponse({
+            'message': f'Event "{event_title}" has been deleted successfully.'
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
