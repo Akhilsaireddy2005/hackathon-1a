@@ -1,0 +1,303 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Home - KLH University Smart Campus{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+    }
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    .hero-subtitle {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .feature-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        border: none;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 1.5rem;
+    }
+    .feature-icon.events { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .feature-icon.lost { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .feature-icon.clubs { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+    .feature-icon.feedback { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+    .btn-hero {
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+    }
+    .btn-hero-primary {
+        background: white;
+        color: #667eea;
+        border: 2px solid white;
+    }
+    .btn-hero-primary:hover {
+        background: transparent;
+        color: white;
+        border-color: white;
+    }
+    .btn-hero-secondary {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+    }
+    .btn-hero-secondary:hover {
+        background: white;
+        color: #667eea;
+    }
+    .stats-section {
+        background: #f8f9fa;
+        padding: 60px 0;
+    }
+    .stat-card {
+        text-align: center;
+        padding: 2rem;
+    }
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+    .stat-label {
+        color: #6c757d;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="mb-4">
+                    <i class="fas fa-graduation-cap" style="font-size: 4rem; color: white; margin-bottom: 1rem;"></i>
+                </div>
+                <h1 class="hero-title">
+                    Welcome to <span style="color: #ffd700;">Smart Campus</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Your all-in-one platform for KLH University campus life. Connect, discover, and engage with everything happening on campus.
+                </p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'users:register' %}" class="btn btn-hero btn-hero-primary">
+                            Get Started <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                        <a href="{% url 'users:login' %}" class="btn btn-hero btn-hero-secondary">
+                            Sign In
+                        </a>
+                    {% else %}
+                        <a href="{% url 'users:profile' %}" class="btn btn-hero btn-hero-primary">
+                            My Profile <i class="fas fa-user ms-2"></i>
+                        </a>
+                        <a href="{% url 'events:list' %}" class="btn btn-hero btn-hero-secondary">
+                            Browse Events
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ events|length|default:0 }}</div>
+                    <div class="stat-label">Active Events</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ lost_items|length|default:0 }}</div>
+                    <div class="stat-label">Lost Items</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ clubs|length|default:0 }}</div>
+                    <div class="stat-label">Active Clubs</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ unread_notifications_count|default:0 }}</div>
+                    <div class="stat-label">Unread Notifications</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="feature-card text-center">
+                <div class="feature-icon events">
+                    <i class="fas fa-calendar-alt text-white"></i>
+                </div>
+                <h4 class="mb-3">Events</h4>
+                <p class="text-muted mb-4">Stay updated with campus events and activities</p>
+                <a href="{% url 'events:list' %}" class="btn btn-outline-primary">View Events</a>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="feature-card text-center">
+                <div class="feature-icon lost">
+                    <i class="fas fa-search text-white"></i>
+                </div>
+                <h4 class="mb-3">Lost & Found</h4>
+                <p class="text-muted mb-4">Quickly recover lost items or help others find theirs</p>
+                <a href="{% url 'lost_found:list' %}" class="btn btn-outline-primary">Browse Items</a>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="feature-card text-center">
+                <div class="feature-icon clubs">
+                    <i class="fas fa-users text-white"></i>
+                </div>
+                <h4 class="mb-3">Clubs</h4>
+                <p class="text-muted mb-4">Join clubs and connect with like-minded students</p>
+                <a href="{% url 'clubs:list' %}" class="btn btn-outline-primary">Explore Clubs</a>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="feature-card text-center">
+                <div class="feature-icon feedback">
+                    <i class="fas fa-comment-alt text-white"></i>
+                </div>
+                <h4 class="mb-3">Feedback</h4>
+                <p class="text-muted mb-4">Share your thoughts and help improve campus life</p>
+                <a href="{% url 'feedback:create' %}" class="btn btn-outline-primary">Submit Feedback</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity Section -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt text-primary me-2"></i>Recent Events</h5>
+                </div>
+                <div class="card-body">
+                    {% if events %}
+                        {% for event in events %}
+                            <div class="d-flex align-items-center mb-3 p-3 border rounded">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">{{ event.title }}</h6>
+                                    <small class="text-muted">{{ event.start_date|date:"M d, Y" }} • {{ event.location }}</small>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <a href="{% url 'events:detail' event.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'events:list' %}" class="btn btn-primary">View All Events</a>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">No events scheduled</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0"><i class="fas fa-search text-warning me-2"></i>Recent Lost Items</h5>
+                </div>
+                <div class="card-body">
+                    {% if lost_items %}
+                        {% for item in lost_items %}
+                            <div class="d-flex align-items-center mb-3 p-3 border rounded">
+                                <div class="flex-shrink-0">
+                                    <div class="{% if item.status == 'lost' %}bg-warning{% elif item.status == 'found' %}bg-success{% else %}bg-secondary{% endif %} text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-{% if item.status == 'lost' %}exclamation-triangle{% elif item.status == 'found' %}check{% else %}question{% endif %}"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">{{ item.title }}</h6>
+                                    <small class="text-muted">{{ item.location }} • {{ item.date|date:"M d, Y" }}</small>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <div class="btn-group">
+                                        <a href="{% url 'lost_found:detail' item.id %}" class="btn btn-sm btn-outline-warning">View</a>
+                                        {% if user.is_authenticated and user == item.user or user.is_admin_user %}
+                                        <a href="{% url 'lost_found:update' item.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'lost_found:list' %}" class="btn btn-warning">View All Items</a>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-search text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">No lost items reported</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

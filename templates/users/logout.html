@@ -1,0 +1,21 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Logged Out - KLH University Smart Campus{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Logged Out</h3>
+            </div>
+            <div class="card-body text-center">
+                <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
+                <h4>You have been successfully logged out</h4>
+                <p class="mb-4">Thank you for using KLH University Smart Campus</p>
+                <a href="{% url 'users:login' %}" class="btn btn-primary">Log In Again</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

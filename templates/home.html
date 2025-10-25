@@ -1,0 +1,97 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Smart Campus - Home{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to Smart Campus</h1>
+        <p class="lead">Your all-in-one platform for campus activities, clubs, events, and more!</p>
+        <hr class="my-4">
+        <p>Explore the features below to get started.</p>
+    </div>
+
+    <div class="row">
+        <!-- Events Section -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Upcoming Events</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_events %}
+                        <ul class="list-group list-group-flush">
+                            {% for event in recent_events %}
+                                <li class="list-group-item">
+                                    <h6>{{ event.title }}</h6>
+                                    <p class="small text-muted">{{ event.date|date:"F d, Y" }} at {{ event.time }}</p>
+                                    <a href="{% url 'events:detail' event.id %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center">No upcoming events.</p>
+                    {% endif %}
+                    <div class="text-center mt-3">
+                        <a href="{% url 'events:list' %}" class="btn btn-primary">View All Events</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lost & Found Section -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Recent Lost Items</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_lost_items %}
+                        <ul class="list-group list-group-flush">
+                            {% for item in recent_lost_items %}
+                                <li class="list-group-item">
+                                    <h6>{{ item.name }}</h6>
+                                    <p class="small text-muted">Found at {{ item.location }} on {{ item.date_found|date:"F d, Y" }}</p>
+                                    <a href="{% url 'lost_found:detail' item.id %}" class="btn btn-sm btn-outline-warning">View Details</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center">No recent lost items.</p>
+                    {% endif %}
+                    <div class="text-center mt-3">
+                        <a href="{% url 'lost_found:list' %}" class="btn btn-warning">View All Items</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clubs Section -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Featured Clubs</h5>
+                </div>
+                <div class="card-body">
+                    {% if featured_clubs %}
+                        <ul class="list-group list-group-flush">
+                            {% for club in featured_clubs %}
+                                <li class="list-group-item">
+                                    <h6>{{ club.name }}</h6>
+                                    <p class="small text-muted">{{ club.members.count }} members</p>
+                                    <a href="{% url 'clubs:detail' club.id %}" class="btn btn-sm btn-outline-success">View Details</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center">No clubs available.</p>
+                    {% endif %}
+                    <div class="text-center mt-3">
+                        <a href="{% url 'clubs:list' %}" class="btn btn-success">View All Clubs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

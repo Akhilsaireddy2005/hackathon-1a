@@ -1,0 +1,259 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .form-header {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+    .form-body {
+        padding: 2rem;
+    }
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #f093fb;
+        box-shadow: 0 0 0 0.2rem rgba(240, 147, 251, 0.25);
+    }
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    .status-options {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .status-option {
+        flex: 1;
+        position: relative;
+    }
+    .status-option input[type="radio"] {
+        display: none;
+    }
+    .status-option label {
+        display: block;
+        padding: 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    .status-option input[type="radio"]:checked + label {
+        border-color: #f093fb;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(240, 147, 251, 0.3);
+    }
+    .status-option label:hover {
+        border-color: #f093fb;
+        transform: translateY(-1px);
+    }
+    .image-upload {
+        border: 2px dashed #e9ecef;
+        border-radius: 10px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+    .image-upload:hover {
+        border-color: #f093fb;
+        background: #fff5f8;
+    }
+    .image-upload.dragover {
+        border-color: #f093fb;
+        background: #fff5f8;
+        transform: scale(1.02);
+    }
+    .image-preview {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 10px;
+        margin-top: 1rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        color: white;
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
+        color: white;
+    }
+    .btn-cancel {
+        background: #6c757d;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        color: white;
+    }
+    .btn-cancel:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        color: white;
+    }
+    .form-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-card">
+                <div class="form-header">
+                    <i class="fas fa-{% if 'Create' in title %}plus{% else %}edit{% endif %} form-icon"></i>
+                    <h2 class="mb-0">{{ title }}</h2>
+                    <p class="mb-0 mt-2">Help the campus community by reporting lost or found items</p>
+                </div>
+                <div class="form-body">
+                    <form method="post" enctype="multipart/form-data" id="lostFoundForm">
+                        {% csrf_token %}
+                        
+                        <!-- Item Type Selection -->
+                        <div class="mb-4">
+                            <label class="form-label">Item Type</label>
+                            <div class="status-options">
+                                <div class="status-option">
+                                    <input type="radio" name="status" value="lost" id="status_lost" {% if form.status.value == 'lost' or not form.status.value %}checked{% endif %}>
+                                    <label for="status_lost">
+                                        <i class="fas fa-exclamation-triangle mb-2" style="font-size: 1.5rem; display: block;"></i>
+                                        <strong>Lost Item</strong><br>
+                                        <small>I lost something</small>
+                                    </label>
+                                </div>
+                                <div class="status-option">
+                                    <input type="radio" name="status" value="found" id="status_found" {% if form.status.value == 'found' %}checked{% endif %}>
+                                    <label for="status_found">
+                                        <i class="fas fa-check-circle mb-2" style="font-size: 1.5rem; display: block;"></i>
+                                        <strong>Found Item</strong><br>
+                                        <small>I found something</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_title" class="form-label">Item Title</label>
+                                <input type="text" name="title" value="{{ form.title.value|default_if_none:'' }}" class="form-control" id="id_title" placeholder="e.g., Black iPhone 12, Blue Backpack" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_date" class="form-label">Date</label>
+                                <input type="date" name="date" value="{{ form.date.value|default_if_none:'' }}" class="form-control" id="id_date" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description</label>
+                            <textarea name="description" class="form-control" id="id_description" rows="4" placeholder="Describe the item in detail (color, brand, size, distinctive features, etc.)" required>{{ form.description.value|default_if_none:'' }}</textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_location" class="form-label">Location</label>
+                                <input type="text" name="location" value="{{ form.location.value|default_if_none:'' }}" class="form-control" id="id_location" placeholder="e.g., Library, Cafeteria, Parking Lot" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_image" class="form-label">Item Image</label>
+                                <div class="image-upload" id="imageUpload">
+                                    <i class="fas fa-cloud-upload-alt mb-2" style="font-size: 2rem; color: #6c757d;"></i>
+                                    <p class="mb-2">Click to upload or drag and drop</p>
+                                    <input type="file" name="image" class="form-control" id="id_image" accept="image/*" onchange="previewImage(this)">
+                                    <small class="text-muted">JPG, PNG, GIF up to 10MB</small>
+                                </div>
+                                <img id="imagePreview" class="image-preview" style="display: none;">
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-submit me-3">
+                                <i class="fas fa-save me-2"></i>Submit Report
+                            </button>
+                            <a href="{% url 'lost_found:list' %}" class="btn btn-cancel">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('imagePreview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Drag and drop functionality
+const imageUpload = document.getElementById('imageUpload');
+const fileInput = document.getElementById('id_image');
+
+imageUpload.addEventListener('click', () => fileInput.click());
+
+imageUpload.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    imageUpload.classList.add('dragover');
+});
+
+imageUpload.addEventListener('dragleave', () => {
+    imageUpload.classList.remove('dragover');
+});
+
+imageUpload.addEventListener('drop', (e) => {
+    e.preventDefault();
+    imageUpload.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        fileInput.files = files;
+        previewImage(fileInput);
+    }
+});
+</script>
+{% endblock %}

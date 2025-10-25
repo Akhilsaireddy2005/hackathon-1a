@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>{{ title }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_title" class="form-label">Title</label>
+                    {{ form.title }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_description" class="form-label">Description</label>
+                    {{ form.description }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_location" class="form-label">Location</label>
+                    {{ form.location }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_start_date" class="form-label">Start Date & Time</label>
+                    {{ form.start_date }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_end_date" class="form-label">End Date & Time</label>
+                    {{ form.end_date }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_image" class="form-label">Image</label>
+                    {{ form.image }}
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a href="{% url 'events:list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Notifications - KLH University Smart Campus{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Notifications</h3>
+                    <span class="badge bg-light text-dark">{{ notifications|length }} notifications</span>
+                </div>
+                <div class="card-body">
+                    {% if notifications %}
+                        <div class="list-group">
+                            {% for notification in notifications %}
+                                <a href="{% url 'users:mark_notification_read' notification.id %}" class="list-group-item list-group-item-action {% if not notification.is_read %}list-group-item-primary{% endif %}">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ notification.title }}</h5>
+                                        <small>{{ notification.created_at|timesince }} ago</small>
+                                    </div>
+                                    <p class="mb-1">{{ notification.message }}</p>
+                                    {% if not notification.is_read %}
+                                        <span class="badge bg-primary">New</span>
+                                    {% endif %}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-bell-slash fa-4x text-muted mb-3"></i>
+                            <h4>No notifications yet</h4>
+                            <p class="text-muted">You don't have any notifications at the moment.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // JavaScript for real-time notification updates
+    function checkForNewNotifications() {
+        // This would be replaced with actual AJAX call in a production environment
+        console.log("Checking for new notifications...");
+    }
+    
+    // Check for new notifications every 30 seconds
+    setInterval(checkForNewNotifications, 30000);
+</script>
+{% endblock %}
