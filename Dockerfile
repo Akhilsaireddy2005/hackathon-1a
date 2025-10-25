@@ -31,8 +31,11 @@ COPY . /app/
 # Create directories for static and media files
 RUN mkdir -p /app/staticfiles /app/media
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
+# Set environment variables for Django
+ENV DJANGO_SETTINGS_MODULE=smart_campus.settings
+
+# Collect static files (skip database operations during build)
+RUN python manage.py collectstatic --noinput --clear
 
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' appuser \
@@ -46,5 +49,9 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/ || exit 1
 
+# Create startup script
+RUN echo '#!/bin/bash\nset -e\npython manage.py migrate --noinput\npython manage.py collectstatic --noinput\nexec gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 smart_campus.wsgi:application' > /app/start.sh \
+    && chmod +x /app/start.sh
+
 # Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120", "smart_campus.wsgi:application"]
+CMD ["/app/start.sh"]
