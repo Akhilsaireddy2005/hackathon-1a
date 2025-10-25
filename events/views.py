@@ -21,6 +21,11 @@ def event_list(request):
 @login_required
 @faculty_or_admin_required
 def create_event(request):
+    # Additional server-side validation
+    if not request.user.has_event_permission():
+        messages.error(request, 'You do not have permission to create events.')
+        return redirect('events:list')
+    
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
@@ -47,3 +52,42 @@ def attend_event(request, event_id):
         event.attendees.add(request.user)
         messages.success(request, 'You are now attending this event!')
     return redirect('events:detail', event_id=event.id)
+
+@login_required
+def edit_event(request, event_id):
+    """Edit an event - only organizer or admin can edit"""
+    event = get_object_or_404(Event, id=event_id)
+    
+    # Check if user can edit (organizer or admin)
+    if not (request.user == event.organizer or request.user.is_admin_user()):
+        messages.error(request, 'You do not have permission to edit this event.')
+        return redirect('events:detail', event_id=event.id)
+    
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES, instance=event)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Event updated successfully!')
+            return redirect('events:detail', event_id=event.id)
+    else:
+        form = EventForm(instance=event)
+    
+    return render(request, 'events/form.html', {'form': form, 'title': 'Edit Event', 'event': event})
+
+@login_required
+def delete_event(request, event_id):
+    """Delete an event - only organizer or admin can delete"""
+    event = get_object_or_404(Event, id=event_id)
+    
+    # Check if user can delete (organizer or admin)
+    if not (request.user == event.organizer or request.user.is_admin_user()):
+        messages.error(request, 'You do not have permission to delete this event.')
+        return redirect('events:detail', event_id=event.id)
+    
+    if request.method == 'POST':
+        event_title = event.title
+        event.delete()
+        messages.success(request, f'Event "{event_title}" has been deleted successfully.')
+        return redirect('events:list')
+    
+    return render(request, 'events/confirm_delete.html', {'event': event})

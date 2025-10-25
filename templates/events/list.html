@@ -1,4 +1,5 @@
 {% extends 'base/base.html' %}
+{% load user_permissions %}
 
 {% block title %}Events - KLH University Smart Campus{% endblock %}
 
@@ -14,9 +15,13 @@
                     </h1>
                     <p class="lead text-muted">Discover and join exciting campus events</p>
                 </div>
-                {% if user.is_authenticated and not user.is_student %}
+                {% if user|can_create_events %}
                 <a href="{% url 'events:create' %}" class="btn btn-primary btn-lg shadow-sm">
                     <i class="fas fa-plus me-2"></i>Create Event
+                </a>
+                {% elif user|can_request_permission %}
+                <a href="{% url 'users:request_permission' %}" class="btn btn-outline-primary btn-lg shadow-sm">
+                    <i class="fas fa-key me-2"></i>Request Permission
                 </a>
                 {% endif %}
             </div>
@@ -90,7 +95,7 @@
                 <i class="fas fa-calendar-times fa-5x text-muted mb-4"></i>
                 <h3 class="text-muted">No Events Available</h3>
                 <p class="text-muted">There are no events scheduled at the moment.</p>
-                {% if user.is_authenticated and not user.is_student %}
+                {% if user|can_create_events %}
                 <a href="{% url 'events:create' %}" class="btn btn-primary btn-lg mt-3">
                     <i class="fas fa-plus me-2"></i>Create First Event
                 </a>

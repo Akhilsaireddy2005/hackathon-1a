@@ -12,4 +12,8 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('notifications/', views.notifications, name='notifications'),
     path('notifications/<int:notification_id>/read/', views.mark_notification_read, name='mark_notification_read'),
+    path('request-permission/', views.request_permission, name='request_permission'),
+    path('permission-requests/', views.permission_requests, name='permission_requests'),
+    path('permission-requests/<int:request_id>/approve/', views.approve_permission, name='approve_permission'),
+    path('permission-requests/<int:request_id>/reject/', views.reject_permission, name='reject_permission'),
 ]
