@@ -157,6 +157,7 @@ pygame==2.6.0
 Pygments==2.14.0
 pyHanko==0.26.0
 pyhanko-certvalidator==0.26.8
+python-3.11.9
 pyparsing==3.2.0
 pypdf==5.4.0
 pytesseract==0.3.13
