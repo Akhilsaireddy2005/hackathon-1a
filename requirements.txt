@@ -1,49 +1,5 @@
-# Core Django dependencies
+# Essential Django packages
 Django==5.0.7
-django-cors-headers==4.7.0
-django-crispy-forms==2.3
-django-extensions==3.2.3
-django-tables2==2.7.0
-django-widget-tweaks==1.4.8
-djangorestframework==3.14.0
-
-# Database
-psycopg2==2.9.10
-
-# Web server
 gunicorn==22.0.0
-
-# Static files
 whitenoise==6.8.2
-
-# Image processing
 Pillow==10.2.0
-
-# HTTP requests
-requests==2.31.0
-
-# Date/time utilities
-python-dateutil==2.8.2
-pytz==2025.2
-
-# Security
-cryptography==44.0.2
-
-# Form handling
-crispy-bootstrap4==2024.10
-crispy-bootstrap5==2024.10
-
-# Optional: Basic ML libraries (uncomment if needed)
-# numpy==1.26.4
-# scikit-learn==1.2.1
-# pandas==2.1.4
-
-# Optional: OpenCV (uncomment if needed)
-# opencv-python==4.10.0.84
-
-# Optional: TensorFlow (uncomment if needed)
-# tensorflow==2.18.0
-
-# Development tools (remove in production)
-# black==23.1.0
-# debugpy==1.6.6
